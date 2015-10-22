@@ -37,7 +37,11 @@ for root, directories, filenames in os.walk(args.inputFolder):
             continue
 
         # Get the title of the paper from the metadata
-        title = PDFTools.getPDFTitle(pathToFile)
+        try:
+            title = PDFTools.getPDFTitle(pathToFile)
+        except Exception as e:
+            print("There was an error while getting the title of the PDF : " + pathToFile + ": " + str(e) + " The file will be skipped.")
+            continue
 
         if (title == None or (str.strip(title) == "")):
             print("The metadata of the PDF-file " + pathToFile + " doesn't contain informations about the title. We will try the content of the PDF instead.")
