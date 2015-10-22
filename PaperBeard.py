@@ -14,8 +14,13 @@ parser.add_argument('inputFolder', help='The folder from which the pdfs will be 
 parser.add_argument('outputCSVFile', help='The csv file where the extracted information about the PDF files will be written.')
 args = parser.parse_args()
 
+google_scholar_result_fields = ["title", "author", "year", "citations", "link", "excerpt"]
+
 csvOutputFile = open(args.outputCSVFile, "w")
-csvOutputFile.write("title, author, year, citations, link, excerpt")
+
+for field in google_scholar_result_fields:
+    csvOutputFile.write(field + ", ")
+csvOutputFile.write("\n")
 
 for root, directories, filenames in os.walk(args.inputFolder):
     for filename in filenames:
@@ -55,28 +60,11 @@ for root, directories, filenames in os.walk(args.inputFolder):
         first_scholarresult = raw_scholar_data["results"][0];
         csv_scholarresult = ""
 
-        if ("title" in first_scholarresult):
-            csv_scholarresult += first_scholarresult["title"]
-        csv_scholarresult += ", "
+        for field in google_scholar_result_fields:
+            if (field in first_scholarresult):
+                csv_scholarresult += str(first_scholarresult[field])
+            csv_scholarresult += ", "
 
-        if ("author" in first_scholarresult):
-            csv_scholarresult += first_scholarresult["author"]
-        csv_scholarresult += ", "
-
-        if ("year" in first_scholarresult):
-            csv_scholarresult += first_scholarresult["year"]
-        csv_scholarresult += ", "
-
-        if ("citations" in first_scholarresult):
-            csv_scholarresult += str(first_scholarresult["citations"])
-        csv_scholarresult += ", "
-
-        if ("link" in first_scholarresult):
-            csv_scholarresult += first_scholarresult["link"]
-        csv_scholarresult += ", "
-
-        if ("excerpt" in first_scholarresult):
-            csv_scholarresult += first_scholarresult["excerpt"]
         csv_scholarresult += "\n"
 
         csvOutputFile.write(csv_scholarresult)
