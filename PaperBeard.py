@@ -14,6 +14,9 @@ parser.add_argument('inputFolder', help='The folder from which the pdfs will be 
 parser.add_argument('outputCSVFile', help='The csv file where the extracted information about the PDF files will be written.')
 args = parser.parse_args()
 
+csvOutputFile = open(args.outputCSVFile, "w")
+csvOutputFile.write("title, author, year, citations, link, excerpt")
+
 for root, directories, filenames in os.walk(args.inputFolder):
     for filename in filenames:
         # Get the full path to the file
@@ -49,15 +52,37 @@ for root, directories, filenames in os.walk(args.inputFolder):
             print("----")
             continue
 
-        scholarresult_title = raw_scholar_data["results"][0]["title"]
-        scholarresult_author = raw_scholar_data["results"][0]["author"]
-        scholarresult_citings = raw_scholar_data["results"][0]["citations"]
+        first_scholarresult = raw_scholar_data["results"][0];
+        csv_scholarresult = ""
 
-        output = scholarresult_title + " " + scholarresult_author + " " + scholarresult_citings
+        if ("title" in first_scholarresult):
+            csv_scholarresult += first_scholarresult["title"]
+        csv_scholarresult += ", "
 
-        print(output)
-        print("----")
+        if ("author" in first_scholarresult):
+            csv_scholarresult += first_scholarresult["author"]
+        csv_scholarresult += ", "
+
+        if ("year" in first_scholarresult):
+            csv_scholarresult += first_scholarresult["year"]
+        csv_scholarresult += ", "
+
+        if ("citations" in first_scholarresult):
+            csv_scholarresult += str(first_scholarresult["citations"])
+        csv_scholarresult += ", "
+
+        if ("link" in first_scholarresult):
+            csv_scholarresult += first_scholarresult["link"]
+        csv_scholarresult += ", "
+
+        if ("excerpt" in first_scholarresult):
+            csv_scholarresult += first_scholarresult["excerpt"]
+        csv_scholarresult += "\n"
+
+        csvOutputFile.write(csv_scholarresult)
 
         # Wait a moment to avoid getting tagged as a bot...
         time.sleep(0.5 + 3 * random.random())
 
+csvOutputFile.close()
+print("Getting Google Scholar results for PDF completed...")
