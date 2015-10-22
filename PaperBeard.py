@@ -19,7 +19,7 @@ google_scholar_result_fields = ["title", "author", "year", "citations", "link", 
 csvOutputFile = open(args.outputCSVFile, "w")
 
 for field in google_scholar_result_fields:
-    csvOutputFile.write(field + ", ")
+    csvOutputFile.write(field + "; ")
 csvOutputFile.write("\n")
 
 for root, directories, filenames in os.walk(args.inputFolder):
@@ -63,7 +63,7 @@ for root, directories, filenames in os.walk(args.inputFolder):
         for field in google_scholar_result_fields:
             if (field in first_scholarresult):
                 csv_scholarresult += str(first_scholarresult[field])
-            csv_scholarresult += ", "
+            csv_scholarresult += "; "
 
         csv_scholarresult += "\n"
 
