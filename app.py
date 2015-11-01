@@ -1,10 +1,13 @@
-import os
+#!/usr/bin/env python
+"""
+
+"""
 import argparse
-import random
-from pyGoogleSearch import *
 import time
-from PDFTools import *
-from pdftitle import pdf_title
+import os
+from paper_beard import pdf_tools
+from pyGoogleSearch import Google
+import random
 
 __author__ = 'Malte Eckhoff'
 
@@ -14,9 +17,9 @@ parser.add_argument('inputFolder', help='The folder from which the pdfs will be 
 parser.add_argument('outputCSVFile', help='The csv file where the extracted information about the PDF files will be written.')
 args = parser.parse_args()
 
-google_scholar_result_fields = ["title", "author", "year", "citations", "link", "excerpt"]
-
 csvOutputFile = open(args.outputCSVFile, "w")
+
+google_scholar_result_fields = ["title", "author", "year", "citations", "link", "excerpt"]
 
 for field in google_scholar_result_fields:
     csvOutputFile.write(field + "; ")
@@ -28,35 +31,35 @@ for root, directories, filenames in os.walk(args.inputFolder):
         pathToFile = os.path.join(root, filename)
 
         # Check if this is actually a file
-        if (not os.path.isfile(pathToFile)):
+        if not os.path.isfile(pathToFile):
             continue
 
         # Check if this is a PDF file
         extension = os.path.splitext(pathToFile)[1]
-        if (extension.lower() != '.pdf'):
+        if extension.lower() != '.pdf':
             continue
 
         # Get the title of the paper from the metadata
         try:
-            title = PDFTools.getPDFTitle(pathToFile)
+            title = pdf_tools.get_title(pathToFile)
         except Exception as e:
             print("There was an error while getting the title of the PDF : " + pathToFile + ": " + str(e) + " The file will be skipped.")
             continue
 
-        if (title == None or (str.strip(title) == "")):
+        if title is None or (str.strip(title) == ""):
             print("The metadata of the PDF-file " + pathToFile + " doesn't contain informations about the title. We will try the content of the PDF instead.")
-            title = pdf_title(pathToFile)
+            title = pdf_tools.get_title(pathToFile)
 
         # Get the name of the author from the metadata
-        author = PDFTools.getPDFAuthor(pathToFile)
+        author = pdf_tools.get_author(pathToFile)
 
         googleScholarSearchString = title
-        if (author != None):
+        if author is not None:
             googleScholarSearchString += " " + author
 
         raw_scholar_data = Google(googleScholarSearchString, pages=1).search_scholar()
 
-        if (len(raw_scholar_data["results"]) == 0):
+        if len(raw_scholar_data["results"]) == 0:
             print("No Google Scholar result for file " + pathToFile + " with search string '" + googleScholarSearchString + "' found. This file will be skipped.")
             print("----")
             continue
@@ -65,7 +68,7 @@ for root, directories, filenames in os.walk(args.inputFolder):
         csv_scholarresult = ""
 
         for field in google_scholar_result_fields:
-            if (field in first_scholarresult):
+            if field in first_scholarresult:
                 csv_scholarresult += str(first_scholarresult[field])
             csv_scholarresult += "; "
 

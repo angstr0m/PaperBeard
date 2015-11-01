@@ -107,3 +107,8 @@ target/
 
 # Specific Files and folders
 TestPDFs
+
+# virtualenv
+bin/
+include/
+lib/
