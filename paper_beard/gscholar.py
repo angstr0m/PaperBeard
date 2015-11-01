@@ -26,7 +26,7 @@ Call the method query with a string which contains the full search
 string. Query will return a list of citations.
 
 """
-import PDFTools
+from paper_beard import pdf_tools
 
 try:
     # python 2
@@ -47,7 +47,6 @@ import hashlib
 import random
 import sys
 import os
-import subprocess
 import optparse
 import logging
 
@@ -142,7 +141,7 @@ def convert_pdf_to_txt(pdf, startpage=None):
         startpageargs = ['-f', str(startpage)]
     else:
         startpageargs = []
-    stdout = PDFTools.PDFTools.getPDFContent(pdf)
+    stdout = pdf_tools.PDFTools.get_content(pdf)
     return stdout
 
 

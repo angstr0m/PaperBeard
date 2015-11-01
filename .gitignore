@@ -107,3 +107,9 @@ target/
 
 # Specific Files and folders
 TestPDFs
+
+# virtualenv
+bin/
+include/
+lib/
+pip-selfcheck.json
