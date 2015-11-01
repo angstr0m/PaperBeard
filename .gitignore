@@ -112,3 +112,4 @@ TestPDFs
 bin/
 include/
 lib/
+pip-selfcheck.json

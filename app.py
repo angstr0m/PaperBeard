@@ -4,10 +4,11 @@
 """
 import argparse
 import time
+import paper_beard.export
 import os
-from paper_beard import pdf_tools
-from pyGoogleSearch import Google
+import paper_beard
 import random
+
 
 __author__ = 'Malte Eckhoff'
 
@@ -18,66 +19,16 @@ parser.add_argument('outputCSVFile', help='The csv file where the extracted info
 args = parser.parse_args()
 
 csvOutputFile = open(args.outputCSVFile, "w")
-
-google_scholar_result_fields = ["title", "author", "year", "citations", "link", "excerpt"]
-
-for field in google_scholar_result_fields:
-    csvOutputFile.write(field + "; ")
-csvOutputFile.write("\n")
-
+result = []
 for root, directories, filenames in os.walk(args.inputFolder):
     for filename in filenames:
         # Get the full path to the file
-        pathToFile = os.path.join(root, filename)
-
-        # Check if this is actually a file
-        if not os.path.isfile(pathToFile):
-            continue
-
-        # Check if this is a PDF file
-        extension = os.path.splitext(pathToFile)[1]
-        if extension.lower() != '.pdf':
-            continue
-
-        # Get the title of the paper from the metadata
-        try:
-            title = pdf_tools.get_title(pathToFile)
-        except Exception as e:
-            print("There was an error while getting the title of the PDF : " + pathToFile + ": " + str(e) + " The file will be skipped.")
-            continue
-
-        if title is None or (str.strip(title) == ""):
-            print("The metadata of the PDF-file " + pathToFile + " doesn't contain informations about the title. We will try the content of the PDF instead.")
-            title = pdf_tools.get_title(pathToFile)
-
-        # Get the name of the author from the metadata
-        author = pdf_tools.get_author(pathToFile)
-
-        googleScholarSearchString = title
-        if author is not None:
-            googleScholarSearchString += " " + author
-
-        raw_scholar_data = Google(googleScholarSearchString, pages=1).search_scholar()
-
-        if len(raw_scholar_data["results"]) == 0:
-            print("No Google Scholar result for file " + pathToFile + " with search string '" + googleScholarSearchString + "' found. This file will be skipped.")
-            print("----")
-            continue
-
-        first_scholarresult = raw_scholar_data["results"][0];
-        csv_scholarresult = ""
-
-        for field in google_scholar_result_fields:
-            if field in first_scholarresult:
-                csv_scholarresult += str(first_scholarresult[field])
-            csv_scholarresult += "; "
-
-        csv_scholarresult += "\n"
-
-        csvOutputFile.write(csv_scholarresult)
-
+        path_to_file = os.path.join(root, filename)
+        result.append(paper_beard.check(path_to_file))
         # Wait a moment to avoid getting tagged as a bot...
         time.sleep(0.5 + 3 * random.random())
+result = list(filter(None.__ne__, result))
+paper_beard.export.csv(result, csvOutputFile)
 
 csvOutputFile.close()
 print("Getting Google Scholar results for PDF completed...")

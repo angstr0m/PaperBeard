@@ -14,6 +14,7 @@ import string
 
 import io
 import os
+from pdfminer.psparser import PSEOF
 import re
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
@@ -22,7 +23,7 @@ from pdfminer.pdfparser import PDFSyntaxError
 from paper_beard import pdf_tools
 
 
-__all__ = ['pdf_title']
+__all__ = ['title']
 
 
 def sanitize(filename):
@@ -35,7 +36,7 @@ def sanitize(filename):
 def meta_title(filename):
     """Title from pdf metadata.
     """
-    return pdf_tools.getPDFTitle(filename)
+    return pdf_tools.get_title(filename)
 
 
 def copyright_line(line):
@@ -43,8 +44,10 @@ def copyright_line(line):
     """
     return re.search(r'technical\s+report|proceedings|preprint|to\s+appear|submission|journal|', line.lower())
 
+
 def empty_str(s):
     return len(s.strip()) == 0
+
 
 def pdf_text(filename):
     try:
@@ -54,14 +57,14 @@ def pdf_text(filename):
         process_pdf(rsrc, device, open(filename, 'rb'), None, maxpages=1, password='')
         device.close()
         return text.getvalue()
-    except (PDFSyntaxError, PDFTextExtractionNotAllowed):
+    except (PDFSyntaxError, PDFTextExtractionNotAllowed, PSEOF):
         return ""
 
 
 def title_start(lines):
     for i, line in enumerate(lines):
         if not empty_str(line) and not copyright_line(line):
-            return i;
+            return i
     return 0
 
 
@@ -83,17 +86,17 @@ def text_title(filename):
     return ' '.join(line.strip() for line in lines[i:j])
 
 
-def valid_title(title):
-    return not empty_str(title) and empty_str(os.path.splitext(title)[1])
+def valid_title(title_name):
+    return not empty_str(title_name) and empty_str(os.path.splitext(title_name)[1])
 
 
-def pdf_title(filename):
-    title = meta_title(filename)
-    if valid_title(title):
-        return title
+def title(filename):
+    title_name = meta_title(filename)
+    if valid_title(title_name):
+        return title_name
 
-    title = text_title(filename)
-    if valid_title(title):
-        return title
+    title_name = text_title(filename)
+    if valid_title(title_name):
+        return title_name
 
     return os.path.basename(os.path.splitext(filename)[0])
