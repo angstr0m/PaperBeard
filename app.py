@@ -9,9 +9,6 @@ import os
 import paper_beard
 import random
 
-
-__author__ = 'Malte Eckhoff'
-
 # Parse arguments
 parser = argparse.ArgumentParser(description='Parses PDFs from a folder and puts out a csv containing meta information (like ranking) for the contained PDFs.')
 parser.add_argument('inputFolder', help='The folder from which the pdfs will be looked up on Google Scholar.')
