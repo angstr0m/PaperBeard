@@ -1,15 +1,12 @@
-# PaperBeard
-
-
-## Setup
-
-```
-# create virtual environment
-virtualenv .
-# activate env
-source bin/activate
-# install required packages
-pip3 install -r requirements.txt
-```
+PaperBeard
+==========
 
 ## Usage
+
+
+## Development
+
+### Installation
+
+Run `pipenv install` in the project root. Have a look into `pipenv` documentation
+for details (https://docs.pipenv.org/en/latest/).
