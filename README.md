@@ -3,6 +3,10 @@ PaperBeard
 
 ## Usage
 
+To start the cli:
+```bash
+pipenv run python app.py
+```
 
 ## Development
 

@@ -1,8 +1,6 @@
 """
 Collection of helper functions for extracting information of pdf files.
 """
-__author__ = 'Malte Eckhoff'
-
 from PyPDF2 import PdfFileReader
 
 
