@@ -11,7 +11,7 @@ ply==3.8
 py==1.4.30
 pyGoogleSearch==2.0.1
 pyPdf==1.13
-PyPDF2==1.25.1
+PyPDF2==1.27.5
 pytest==2.8.2
 python-dateutil==2.4.2
 requests==2.5.1
